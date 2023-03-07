@@ -2,7 +2,7 @@
 const express = require('express');
 export const app = express();
 const port = 3003;
-const HTTP_STATUSES = {
+export const HTTP_STATUSES = {
   SUCCESS_200: 200,
   CREATED_201: 201,
   NO_CONTENT_204: 204,
@@ -68,10 +68,10 @@ app.put('/courses/:id', (req, res) => {
   foundCourse.title = req.body.title;
   res.sendStatus(HTTP_STATUSES.NO_CONTENT_204);
 });
-app.delete('/__test__/data/' , (req,res) => {
+app.delete('/__test__/data/', (req, res) => {
   dataBase.courses = [];
   res.sendStatus(HTTP_STATUSES.NO_CONTENT_204);
-})
+});
 app.listen(port, () => {
   console.log(`Example app listening on 1port ${port}`);
 });

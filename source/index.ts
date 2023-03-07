@@ -1,5 +1,5 @@
 import express from 'express';
-const app = express();
+export const app = express();
 const port = 3003;
 const HTTP_STATUSES = {
   SUCCESS_200 : 200,
@@ -65,6 +65,10 @@ app.put('/courses/:id', (req, res) => {
     return;
   }
   foundCourse.title = req.body.title;
+  res.sendStatus(HTTP_STATUSES.NO_CONTENT_204);
+})
+app.delete('/__test__/data/' , (req,res) => {
+  dataBase.courses = [];
   res.sendStatus(HTTP_STATUSES.NO_CONTENT_204);
 })
 app.listen(port, () => {

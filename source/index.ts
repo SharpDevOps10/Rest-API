@@ -1,5 +1,8 @@
 import express , { Response} from 'express';
 import {RequestWithBody, RequestWithParams, RequestWithParamsAndBody, RequestWithQuery} from "./types";
+import {CreateCourseModel} from "./models/CreateCourseModel";
+import {QueryCoursesModel} from "./models/QueryCoursesModel";
+import {CourseViewModel} from "./models/CourseViewModel";
 export const app = express();
 const port = 3003;
 type CourseType = {
@@ -24,8 +27,8 @@ const dataBase : {courses : CourseType[]} = {
     {id : 4, title: 'devops'},
   ]
 };
-app.get('/courses', (req : RequestWithQuery<{title: string}>,
-                     res : Response<CourseType[]>) => {
+app.get('/courses', (req : RequestWithQuery<QueryCoursesModel>,
+                     res : Response<CourseViewModel[]>) => {
   let courseSelector = dataBase.courses;
   if (req.query.title) {
     courseSelector = courseSelector
@@ -33,7 +36,8 @@ app.get('/courses', (req : RequestWithQuery<{title: string}>,
   }
   res.json(courseSelector);
 });
-app.get('/courses/:id', (req : RequestWithParams<{id: string}>, res) => {
+app.get('/courses/:id', (req : RequestWithParams<{id: string}>,
+                         res:Response<CourseViewModel>) => {
   const foundCourse = dataBase.courses.find((uir) => uir.id === +req.params.id);
   if (!foundCourse) {
     res.sendStatus(HTTP_STATUSES.NOT_FOUND_404);
@@ -44,7 +48,7 @@ app.get('/courses/:id', (req : RequestWithParams<{id: string}>, res) => {
 app.get('/', (req, res) => {
   res.json({message :'Back-end'});
 });
-app.post('/courses', (req:RequestWithBody<{title : string}>,
+app.post('/courses', (req:RequestWithBody<CreateCourseModel>,
                       res:Response<CourseType>) => {
   if (!req.body.title) {
     res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400);

@@ -1,4 +1,5 @@
-import express , {Request, Response} from 'express';
+import express , { Response} from 'express';
+import {RequestWithBody, RequestWithParams, RequestWithParamsAndBody, RequestWithQuery} from "./types";
 export const app = express();
 const port = 3003;
 type CourseType = {
@@ -23,7 +24,7 @@ const dataBase : {courses : CourseType[]} = {
     {id : 4, title: 'devops'},
   ]
 };
-app.get('/courses', (req : Request <{},{},{},{title: string}>,
+app.get('/courses', (req : RequestWithQuery<{title: string}>,
                      res : Response<CourseType[]>) => {
   let courseSelector = dataBase.courses;
   if (req.query.title) {
@@ -32,7 +33,7 @@ app.get('/courses', (req : Request <{},{},{},{title: string}>,
   }
   res.json(courseSelector);
 });
-app.get('/courses/:id', (req : Request<{id: string}>, res) => {
+app.get('/courses/:id', (req : RequestWithParams<{id: string}>, res) => {
   const foundCourse = dataBase.courses.find((uir) => uir.id === +req.params.id);
   if (!foundCourse) {
     res.sendStatus(HTTP_STATUSES.NOT_FOUND_404);
@@ -43,7 +44,8 @@ app.get('/courses/:id', (req : Request<{id: string}>, res) => {
 app.get('/', (req, res) => {
   res.json({message :'Back-end'});
 });
-app.post('/courses', (req:Request<{},{},{title : string}>,res:Response<CourseType>) => {
+app.post('/courses', (req:RequestWithBody<{title : string}>,
+                      res:Response<CourseType>) => {
   if (!req.body.title) {
     res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400);
     return;
@@ -55,11 +57,11 @@ app.post('/courses', (req:Request<{},{},{title : string}>,res:Response<CourseTyp
   dataBase.courses.push(createdCourse);
   res.status(HTTP_STATUSES.CREATED_201).json(createdCourse);
 });
-app.delete('/courses/:id' , (req:Request<{id : string}>,res) => {
+app.delete('/courses/:id' , (req:RequestWithParams<{id : string}>,res) => {
   dataBase.courses = dataBase.courses.filter((uir) => uir.id !== +req.params.id);
   res.sendStatus(HTTP_STATUSES.NO_CONTENT_204);
 });
-app.put('/courses/:id', (req:Request<{id : string},{},{title : string}>, res) => {
+app.put('/courses/:id', (req:RequestWithParamsAndBody<{id : string},{title : string}>, res) => {
   if (!req.body.title) {
     res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400);
     return;

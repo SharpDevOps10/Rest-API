@@ -30,6 +30,12 @@ const dataBase : {courses : CourseType[]} = {
     {id : 4, title: 'devops',studentsCount : 10},
   ]
 };
+const getViewModel = (dbCourse : CourseType) : CourseViewModel => {
+  return {
+    id : dbCourse.id,
+    title : dbCourse.title,
+  }
+}
 app.get('/courses', (req : RequestWithQuery<QueryCoursesModel>,
                      res : Response<CourseViewModel[]>) => {
   let courseSelector = dataBase.courses;
@@ -37,12 +43,7 @@ app.get('/courses', (req : RequestWithQuery<QueryCoursesModel>,
     courseSelector = courseSelector
       .filter((c) => c.title.indexOf(req.query.title) > -1 );
   }
-  res.json(courseSelector.map(dataBase => {
-    return {
-      id: dataBase.id,
-      title : dataBase.title,
-    }
-  }));
+  res.json(courseSelector.map(getViewModel));
 });
 app.get('/courses/:id', (req : RequestWithParams<URIParamsCourseModel>,
                          res:Response<CourseViewModel>) => {
@@ -51,10 +52,7 @@ app.get('/courses/:id', (req : RequestWithParams<URIParamsCourseModel>,
     res.sendStatus(HTTP_STATUSES.NOT_FOUND_404);
     return;
   }
-  res.json({
-    id : foundCourse.id,
-    title : foundCourse.title,
-  });
+  res.json(getViewModel(foundCourse));
 });
 app.get('/', (req, res) => {
   res.json({message :'Back-end'});
@@ -71,10 +69,7 @@ app.post('/courses', (req:RequestWithBody<CreateCourseModel>,
     studentsCount : 0
   };
   dataBase.courses.push(createdCourse);
-  res.status(HTTP_STATUSES.CREATED_201).json({
-    id: createdCourse.id,
-    title : createdCourse.title
-  });
+  res.status(HTTP_STATUSES.CREATED_201).json(getViewModel(createdCourse));
 });
 app.delete('/courses/:id' , (req:RequestWithParams<URIParamsCourseModel>,
                              res) => {

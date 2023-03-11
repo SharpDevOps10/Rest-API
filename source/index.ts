@@ -60,7 +60,7 @@ app.get('/', (req, res) => {
   res.json({message :'Back-end'});
 });
 app.post('/courses', (req:RequestWithBody<CreateCourseModel>,
-                      res:Response<CourseType>) => {
+                      res:Response<CourseViewModel>) => {
   if (!req.body.title) {
     res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400);
     return;
@@ -68,10 +68,13 @@ app.post('/courses', (req:RequestWithBody<CreateCourseModel>,
   const createdCourse : CourseType = {
     id: +(new Date()),
     title: req.body.title,
-    studentsCount :0,
+    studentsCount : 0
   };
   dataBase.courses.push(createdCourse);
-  res.status(HTTP_STATUSES.CREATED_201).json(createdCourse);
+  res.status(HTTP_STATUSES.CREATED_201).json({
+    id: createdCourse.id,
+    title : createdCourse.title
+  });
 });
 app.delete('/courses/:id' , (req:RequestWithParams<URIParamsCourseModel>,
                              res) => {

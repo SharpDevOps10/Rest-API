@@ -73,11 +73,12 @@ app.post('/courses', (req:RequestWithBody<CreateCourseModel>,
   dataBase.courses.push(createdCourse);
   res.status(HTTP_STATUSES.CREATED_201).json(createdCourse);
 });
-app.delete('/courses/:id' , (req:RequestWithParams<{id : string}>,res) => {
+app.delete('/courses/:id' , (req:RequestWithParams<URIParamsCourseModel>,
+                             res) => {
   dataBase.courses = dataBase.courses.filter((uir) => uir.id !== +req.params.id);
   res.sendStatus(HTTP_STATUSES.NO_CONTENT_204);
 });
-app.put('/courses/:id', (req:RequestWithParamsAndBody<{id : string},{title : string}>, res) => {
+app.put('/courses/:id', (req:RequestWithParamsAndBody<URIParamsCourseModel,UpdateCourseModel>, res) => {
   if (!req.body.title) {
     res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400);
     return;

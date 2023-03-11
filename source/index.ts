@@ -3,6 +3,8 @@ import {RequestWithBody, RequestWithParams, RequestWithParamsAndBody, RequestWit
 import {CreateCourseModel} from "./models/CreateCourseModel";
 import {QueryCoursesModel} from "./models/QueryCoursesModel";
 import {CourseViewModel} from "./models/CourseViewModel";
+import {UpdateCourseModel} from "./models/UpdateCourseModel";
+import {URIParamsCourseModel} from "./models/URIParamsCourseModel";
 export const app = express();
 const port = 3003;
 type CourseType = {
@@ -42,7 +44,7 @@ app.get('/courses', (req : RequestWithQuery<QueryCoursesModel>,
     }
   }));
 });
-app.get('/courses/:id', (req : RequestWithParams<{id: string}>,
+app.get('/courses/:id', (req : RequestWithParams<URIParamsCourseModel>,
                          res:Response<CourseViewModel>) => {
   const foundCourse = dataBase.courses.find((uir) => uir.id === +req.params.id);
   if (!foundCourse) {

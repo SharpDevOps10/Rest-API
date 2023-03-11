@@ -8,6 +8,7 @@ const port = 3003;
 type CourseType = {
   id : number,
   title : string,
+  studentsCount : number,
 };
 export const HTTP_STATUSES = {
   SUCCESS_200 : 200,
@@ -21,10 +22,10 @@ app.use(jsonBodyMiddleware);
 
 const dataBase : {courses : CourseType[]} = {
   courses:[
-    {id : 1, title : 'front-end'},
-    {id : 2, title: 'back-end'},
-    {id : 3, title: 'automation qa'},
-    {id : 4, title: 'devops'},
+    {id : 1, title : 'front-end',studentsCount : 10},
+    {id : 2, title: 'back-end', studentsCount : 10},
+    {id : 3, title: 'automation qa',studentsCount : 10},
+    {id : 4, title: 'devops',studentsCount : 10},
   ]
 };
 app.get('/courses', (req : RequestWithQuery<QueryCoursesModel>,
@@ -34,7 +35,12 @@ app.get('/courses', (req : RequestWithQuery<QueryCoursesModel>,
     courseSelector = courseSelector
       .filter((c) => c.title.indexOf(req.query.title) > -1 );
   }
-  res.json(courseSelector);
+  res.json(courseSelector.map(dataBase => {
+    return {
+      id: dataBase.id,
+      title : dataBase.title,
+    }
+  }));
 });
 app.get('/courses/:id', (req : RequestWithParams<{id: string}>,
                          res:Response<CourseViewModel>) => {
@@ -43,7 +49,10 @@ app.get('/courses/:id', (req : RequestWithParams<{id: string}>,
     res.sendStatus(HTTP_STATUSES.NOT_FOUND_404);
     return;
   }
-  res.json(foundCourse);
+  res.json({
+    id : foundCourse.id,
+    title : foundCourse.title,
+  });
 });
 app.get('/', (req, res) => {
   res.json({message :'Back-end'});
@@ -54,9 +63,10 @@ app.post('/courses', (req:RequestWithBody<CreateCourseModel>,
     res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400);
     return;
   }
-  const createdCourse = {
+  const createdCourse : CourseType = {
     id: +(new Date()),
     title: req.body.title,
+    studentsCount :0,
   };
   dataBase.courses.push(createdCourse);
   res.status(HTTP_STATUSES.CREATED_201).json(createdCourse);

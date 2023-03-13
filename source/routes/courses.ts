@@ -1,4 +1,4 @@
-import {Express, Response} from "express";
+import express, {Response} from "express";
 import {RequestWithBody, RequestWithParams, RequestWithParamsAndBody, RequestWithQuery} from "../types";
 import {QueryCoursesModel} from "../models/QueryCoursesModel";
 import {CourseViewModel} from "../models/CourseViewModel";
@@ -21,8 +21,9 @@ export const getViewModel = (dbCourse: CourseType): CourseViewModel => {
     title: dbCourse.title,
   }
 }
-export const addCourseRoutes = (app:Express, dataBase : DBType) => {
-  app.get('/courses', (req : RequestWithQuery<QueryCoursesModel>,
+export const getCourseRoutes = (dataBase : DBType) => {
+  const coursesRouter = express.Router();
+  coursesRouter.get('/', (req : RequestWithQuery<QueryCoursesModel>,
                        res : Response<CourseViewModel[]>) => {
     let courseSelector = dataBase.courses;
     if (req.query.title) {
@@ -31,7 +32,7 @@ export const addCourseRoutes = (app:Express, dataBase : DBType) => {
     }
     res.json(courseSelector.map(getViewModel));
   });
-  app.get('/courses/:id', (req : RequestWithParams<URIParamsCourseModel>,
+  coursesRouter.get('/:id', (req : RequestWithParams<URIParamsCourseModel>,
                            res:Response<CourseViewModel>) => {
     const foundCourse = dataBase.courses.find((uir) => uir.id === +req.params.id);
     if (!foundCourse) {
@@ -40,10 +41,10 @@ export const addCourseRoutes = (app:Express, dataBase : DBType) => {
     }
     res.json(getViewModel(foundCourse));
   });
-  app.get('/', (req, res) => {
+  coursesRouter.get('/', (req, res) => {
     res.json({message :'Back-end'});
   });
-  app.post('/courses', (req:RequestWithBody<CreateCourseModel>,
+  coursesRouter.post('/', (req:RequestWithBody<CreateCourseModel>,
                         res:Response<CourseViewModel>) => {
     if (!req.body.title) {
       res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400);
@@ -57,12 +58,12 @@ export const addCourseRoutes = (app:Express, dataBase : DBType) => {
     dataBase.courses.push(createdCourse);
     res.status(HTTP_STATUSES.CREATED_201).json(getViewModel(createdCourse));
   });
-  app.delete('/courses/:id' , (req:RequestWithParams<URIParamsCourseModel>,
+  coursesRouter.delete('/:id' , (req:RequestWithParams<URIParamsCourseModel>,
                                res) => {
     dataBase.courses = dataBase.courses.filter((uir) => uir.id !== +req.params.id);
     res.sendStatus(HTTP_STATUSES.NO_CONTENT_204);
   });
-  app.put('/courses/:id', (req:RequestWithParamsAndBody<URIParamsCourseModel,UpdateCourseModel>, res) => {
+  coursesRouter.put('/:id', (req:RequestWithParamsAndBody<URIParamsCourseModel,UpdateCourseModel>, res) => {
     if (!req.body.title) {
       res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400);
       return;
@@ -75,5 +76,6 @@ export const addCourseRoutes = (app:Express, dataBase : DBType) => {
     foundCourse.title = req.body.title;
     res.sendStatus(HTTP_STATUSES.NO_CONTENT_204);
   });
+  return coursesRouter;
 
 };

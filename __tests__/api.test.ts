@@ -2,7 +2,8 @@ import request from 'supertest';
 import {CreateCourseModel} from "../source/models/CreateCourseModel";
 import {UpdateCourseModel} from "../source/models/UpdateCourseModel";
 import {app} from "../source/app";
-import {HTTP_STATUSES} from "../source/routes/courses";
+import {HTTP_STATUSES} from "../source/utils";
+
 describe('/course' ,() => {
   beforeAll(async () => {
     await request(app).delete('/__test__/data/');

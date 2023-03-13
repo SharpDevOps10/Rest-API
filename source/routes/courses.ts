@@ -6,14 +6,9 @@ import {URIParamsCourseModel} from "../models/URIParamsCourseModel";
 import {CreateCourseModel} from "../models/CreateCourseModel";
 import {UpdateCourseModel} from "../models/UpdateCourseModel";
 import {CourseType, DBType} from "../dataBase/db";
+import {HTTP_STATUSES} from "../utils";
 
-export const HTTP_STATUSES = {
-  SUCCESS_200: 200,
-  CREATED_201: 201,
-  NO_CONTENT_204: 204,
-  BAD_REQUEST_400: 400,
-  NOT_FOUND_404: 404,
-};
+
 
 export const getViewModel = (dbCourse: CourseType): CourseViewModel => {
   return {

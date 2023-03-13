@@ -1,10 +1,12 @@
-import {Express} from "express";
+import express, {} from "express";
 import {DBType} from "../dataBase/db";
 import {HTTP_STATUSES} from "./courses";
 
-export const getTestRouter = (app:Express, dataBase : DBType) => {
-  app.delete('/__test__/data/' , (req,res) => {
+export const getTestRouter = (dataBase : DBType) => {
+  const router = express.Router();
+  router.delete('/data/' , (req,res) => {
     dataBase.courses = [];
     res.sendStatus(HTTP_STATUSES.NO_CONTENT_204);
   });
+  return router;
 }
